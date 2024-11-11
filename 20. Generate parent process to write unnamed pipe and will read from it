@@ -1,0 +1,48 @@
+20. Generate parent process to write unnamed pipe and will read from it 
+#include <stdio.h> 
+#include <unistd.h> 
+#include <stdlib.h> 
+int main() { 
+int pipefd[2];  // Array to hold pipe file descriptors 
+pid_t pid; 
+char buffer[128];  // Buffer to hold data read from the pipe 
+// Create an unnamed pipe 
+if (pipe(pipefd) == -1) { 
+perror("pipe failed"); 
+exit(EXIT_FAILURE); 
+} 
+// Create a child process using fork 
+pid = fork(); 
+if (pid == -1) { 
+perror("fork failed"); 
+exit(EXIT_FAILURE); 
+} 
+if (pid == 0) { 
+// Child process: Read from pipe 
+close(pipefd[1]);  // Close unused write end of the pipe 
+// Read data from the pipe 
+ssize_t bytesRead = read(pipefd[0], buffer, sizeof(buffer) - 1); 
+if (bytesRead == -1) { 
+perror("read failed"); 
+exit(EXIT_FAILURE); 
+} 
+buffer[bytesRead] = '\0';  // Null-terminate the string 
+printf("Child process received: %s\n", buffer); 
+close(pipefd[0]);  // Close the read end of the pipe 
+exit(EXIT_SUCCESS); 
+} else { 
+// Parent process: Write to pipe 
+close(pipefd[0]);  // Close unused read end of the pipe 
+// Write data to the pipe 
+const char *message = "Hello from the parent process!"; 
+ssize_t bytesWritten = write(pipefd[1], message, strlen(message)); 
+if (bytesWritten == -1) { 
+perror("write failed"); 
+exit(EXIT_FAILURE); 
+} 
+printf("Parent process sent: %s\n", message); 
+close(pipefd[1]);  // Close the write end of the pipe 
+wait(NULL);  // Wait for child process to finish 
+exit(EXIT_SUCCESS); 
+} 
+}
