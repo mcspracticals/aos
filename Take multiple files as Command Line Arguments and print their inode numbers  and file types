@@ -1,0 +1,49 @@
+12.  Take multiple files as Command Line Arguments and print their inode numbers 
+and file types 
+#include <stdio.h> 
+#include <stdlib.h> 
+#include <sys/stat.h> 
+#include <unistd.h> 
+// Function to print file type 
+void print_file_type(mode_t mode) { 
+if (S_ISREG(mode)) { 
+printf("Regular file\n"); 
+} else if (S_ISDIR(mode)) { 
+printf("Directory\n"); 
+} else if (S_ISLNK(mode)) { 
+printf("Symbolic link\n"); 
+} else if (S_ISCHR(mode)) { 
+printf("Character device\n"); 
+} else if (S_ISBLK(mode)) { 
+printf("Block device\n"); 
+} else if (S_ISFIFO(mode)) { 
+printf("FIFO (named pipe)\n"); 
+} else if (S_ISSOCK(mode)) { 
+printf("Socket\n"); 
+} else { 
+printf("Unknown file type\n"); 
+} 
+} 
+int main(int argc, char *argv[]) { 
+// Check if at least one file is provided as an argument 
+if (argc < 2) { 
+fprintf(stderr, "Usage: %s <file1> <file2> ... <fileN>\n", argv[0]); 
+return 1; 
+} 
+// Loop over each file argument 
+for (int i = 1; i < argc; i++) { 
+struct stat file_stat; 
+// Get file information using stat() 
+if (stat(argv[i], &file_stat) == -1) { 
+perror(argv[i]); 
+continue; 
+} 
+// Print the inode number and file type 
+printf("File: %s\n", argv[i]); 
+printf("Inode: %ld\n", (long)file_stat.st_ino); 
+printf("Type: "); 
+print_file_type(file_stat.st_mode); 
+printf("\n"); 
+} 
+return 0; 
+}
