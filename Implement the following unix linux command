@@ -1,0 +1,30 @@
+11.  Implement the following unix/linux command (use fork, pipe and exec system 
+call) ls –l | wc –l 
+#include<stdio.h> 
+#include<unistd.h> 
+int main() 
+{ 
+int fd[2],dupFd; 
+char *filename1 ="ls"; 
+char *filename2 ="wc"; 
+char *arg1 = "-l"; 
+pipe(fd); 
+if(!fork())// return 0 for child process and 1 for parent process 
+{ 
+close(1); // 1 for closing stdout 
+dup(fd[1]); 
+close(fd[0]); 
+execlp(filename1,filename1,arg1,NULL); 
+}else 
+{ 
+}  
+} 
+close(0); 
+dup(fd[0]); 
+close(fd[1]); 
+execlp(filename2,filename2,arg1,NULL); 
+Output is 
+(base) amol@amol-Ideapad-320:~/AOS$ ./a.out 
+total 140 
+drwxrwxr-x 2 amol amol  4096 May 28 16:19 adir -rw-rw-r-- 1 amol amol 11962 May 29 13:59 AOSSolution2022.txt -rwxrwxr-x 1 amol amol 16912 May 29 14:00 a.out 
+drwxrwxr-x 3 amol amol  4096 May 28 17:34 kdir
