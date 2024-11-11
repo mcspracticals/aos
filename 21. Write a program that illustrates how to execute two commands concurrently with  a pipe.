@@ -1,0 +1,42 @@
+21. Write a program that illustrates how to execute two commands concurrently with 
+a pipe. 
+#include <stdio.h> 
+#include <stdlib.h> 
+#include <unistd.h> 
+#include <sys/types.h> 
+#include <sys/wait.h> 
+int main() { 
+int pipefd[2]; 
+pid_t pid1, pid2; 
+// Create a pipe 
+if (pipe(pipefd) == -1) { 
+perror("pipe"); 
+exit(EXIT_FAILURE); 
+} 
+// First child process to execute "ls -l" 
+if ((pid1 = fork()) == -1) { 
+perror("fork"); 
+exit(EXIT_FAILURE); 
+} 
+if (pid1 == 0) { 
+// Redirect stdout to pipe write end 
+close(pipefd[0]);           
+ // Close unused read end 
+dup2(pipefd[1], STDOUT_FILENO);  // Redirect stdout to pipe 
+close(pipefd[1]);            
+// Execute "ls -l" 
+// Close original write end 
+execlp("ls", "ls", "-l", (char *)NULL); 
+perror("execlp"); 
+exit(EXIT_FAILURE); 
+} 
+// Second child process to execute "grep .c" 
+if ((pid2 = fork()) == -1) { 
+perror("fork"); 
+exit(EXIT_FAILURE); 
+} 
+if (pid2 == 0) { 
+// Redirect stdin to pipe read end 
+close(pipefd[1]);           
+ // Close unused write end 
+dup2(pipefd[0], STDIN_FILENO);  // Redirect stdin to pipe
