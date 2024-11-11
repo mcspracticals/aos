@@ -1,0 +1,32 @@
+8.  Handle the two-way communication between parent and child processes using 
+pipe. 
+#include <unistd.h> 
+#include <stdio.h> 
+#include <stdlib.h> 
+int main(int argc, char** argv) { 
+int firstPipe[2]; 
+int secondPipe[2]; 
+if (pipe(firstPipe) < 0) { 
+perror("pipe"); 
+exit(1); 
+} 
+if (pipe(secondPipe) < 0) { 
+perror("pipe"); 
+exit(1); 
+} 
+if (fork() != 0) { // child 
+dup2(firstPipe[0], 0); 
+dup2(secondPipe[1], 1); 
+char input[70]; 
+printf("Mr. Stark..."); 
+fgets(input, 70, stdin); 
+fprintf(stderr, "%s I don't wanna go...\n", input); 
+} else { // parent 
+dup2(secondPipe[0], 0); 
+dup2(firstPipe[1], 1); 
+char message[70]; 
+fgets(message, 70, stdin); 
+printf("%s I don't feel so good...", message); 
+} 
+return 0; 
+} 
