@@ -1,0 +1,43 @@
+15. Write a C program to find whether a given files passed through command line 
+arguments are present in current directory or not. 
+#include <stdio.h> 
+#include <stdlib.h> 
+#include <dirent.h> 
+#include <string.h> 
+// Function to check if a file exists in the current directory 
+int file_exists_in_directory(const char *filename) { 
+struct dirent *entry; 
+DIR *dir = opendir("."); // Open the current directory 
+if (dir == NULL) { 
+perror("Failed to open current directory"); 
+return 0; 
+} 
+// Loop through all entries in the current directory 
+while ((entry = readdir(dir)) != NULL) { 
+if (strcmp(entry->d_name, filename) == 0) { 
+// If the file name matches, it exists in the directory 
+closedir(dir); 
+return 1; 
+} 
+} 
+// Close the directory when done 
+closedir(dir); 
+return 0; // File not found in the current directory 
+} 
+int main(int argc, char *argv[]) { 
+// Ensure at least one file is provided as an argument 
+if (argc < 2) { 
+fprintf(stderr, "Usage: %s <file1> <file2> ... <fileN>\n", argv[0]); 
+return 1; 
+} 
+// Loop through each command-line argument (file name) 
+for (int i = 1; i < argc; i++) { 
+// Check if the file exists in the current directory 
+if (file_exists_in_directory(argv[i])) { 
+printf("File '%s' exists in the current directory.\n", argv[i]); 
+} else { 
+printf("File '%s' does not exist in the current directory.\n", argv[i]); 
+} 
+} 
+return 0; 
+}
