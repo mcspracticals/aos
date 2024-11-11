@@ -1,0 +1,44 @@
+14. Print the type of file and inode number where file name accepted through 
+Command Line 
+#include <stdio.h> 
+#include <stdlib.h> 
+#include <sys/stat.h> 
+#include <unistd.h> 
+// Function to print the type of file based on the mode 
+void print_file_type(mode_t mode) { 
+if (S_ISREG(mode)) { 
+printf("Type: Regular file\n"); 
+} else if (S_ISDIR(mode)) { 
+printf("Type: Directory\n"); 
+} else if (S_ISLNK(mode)) { 
+printf("Type: Symbolic link\n"); 
+} else if (S_ISCHR(mode)) { 
+printf("Type: Character device\n"); 
+} else if (S_ISBLK(mode)) { 
+printf("Type: Block device\n"); 
+} else if (S_ISFIFO(mode)) { 
+printf("Type: FIFO (named pipe)\n"); 
+} else if (S_ISSOCK(mode)) { 
+printf("Type: Socket\n"); 
+} else { 
+printf("Type: Unknown\n"); 
+} 
+} 
+int main(int argc, char *argv[]) { 
+// Ensure at least one file is provided as an argument 
+if (argc != 2) { 
+fprintf(stderr, "Usage: %s <filename>\n", argv[0]); 
+return 1; 
+} 
+struct stat file_stat; 
+// Get file information using stat() 
+if (stat(argv[1], &file_stat) == -1) { 
+perror("Error"); 
+return 1; 
+} 
+// Print the file name, inode number, and file type 
+printf("File: %s\n", argv[1]); 
+printf("Inode number: %ld\n", (long)file_stat.st_ino); 
+print_file_type(file_stat.st_mode); 
+return 0;     
+}
