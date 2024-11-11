@@ -1,0 +1,42 @@
+3. Write a C Program that demonstrates redirection of standard output to a file .EX: ls 
+> f1. 
+AIM: 
+Program: 
+#include<stdlib.h> 
+#include<stdio.h> 
+#include<string.h> 
+main(int argc, char *argv[]) 
+{ 
+char d[50]; 
+if(argc==2) 
+{ 
+bzero(d,sizeof(d)); 
+strcat(d,"ls "); 
+strcat(d,"> "); 
+strcat(d,argv[1]); 
+system(d); 
+} 
+else 
+printf("\nInvalid No. of inputs"); 
+} 
+
+
+
+
+
+output: 
+student@ubuntu:~$ gcc –o std.out std.c 
+student@ubuntu:~$ls 
+downloads
+    documents 
+student@ubuntu:~$ cat > f1 
+^z 
+   listing.c     
+student@ubuntu:~$./std.out f1 
+student@ubuntu:~$cat f1 
+downloads    
+documents     
+listing.c       
+listing.out           
+std.c     
+std.out
