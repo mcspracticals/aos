@@ -1,0 +1,38 @@
+7.  Generate parent process to write unnamed pipe and will read from it 
+#include<stdio.h> 
+#include<unistd.h> 
+#include<string.h> 
+int main() { 
+int fd[2] , ret = 0; 
+char buffer[] = "Marvellous InfoSystems"; 
+char readBuff[BUFSIZ]; 
+pid_t Childpid; 
+pipe(fd);                                           
+communication channel i.e pipe i.e unnamed pipe 
+Childpid = fork(); 
+if(Childpid == 0)                                   
+{ 
+close(fd[0]);                                   
+pipe after entering the child process*/ 
+//create a oneway 
+//child process 
+/*close the ipnut side of the 
+printf("Child intiaites communication by writing the data at output side of the 
+pipe \n"); 
+write(fd[1] , buffer , sizeof(buffer));         
+output side of the pipe*/ 
+} 
+else                                                
+{ 
+close(fd[1]);                                   
+after the entering the parent proces*/ 
+/*Child process writes at the 
+//parent process 
+/*Close output side of the pipe 
+ret = read(fd[0] , readBuff , sizeof(readBuff));/*Parent proces reads the data 
+i.e written by the child at output side of the 
+pipe*/ 
+printf("The data read by Parent process is : %s \n",readBuff); 
+} 
+return 0; 
+} 
