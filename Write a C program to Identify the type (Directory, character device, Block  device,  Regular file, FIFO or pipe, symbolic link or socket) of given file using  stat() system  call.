@@ -1,0 +1,45 @@
+6.  Write a C program to Identify the type (Directory, character device, Block 
+device,  Regular file, FIFO or pipe, symbolic link or socket) of given file using 
+stat() system  call. 
+#include <stdio.h> 
+#include <stdlib.h> 
+#include <sys/types.h> 
+#include <sys/stat.h> 
+#include <unistd.h> 
+/* ... */ 
+struct stat foo; 
+const char *path = "/a/b/c"; 
+/* test the result of stat() to make sure it ran correctly */ 
+if (stat(path, &foo) != 0) {  
+fprintf(stderr, "something went wrong with stat()\n");  
+exit(EXIT_FAILURE);  
+} 
+/* now do stuff with foo; e.g. from docs: */ 
+switch (foo.st_mode & S_IFMT) { 
+case S_IFBLK:  printf("block device\n");            
+case S_IFCHR:  printf("character device\n");        
+case S_IFDIR:  printf("directory\n");               
+case S_IFIFO:  printf("FIFO/pipe\n");               
+case S_IFLNK:  printf("symlink\n");                 
+case S_IFREG:  printf("regular file\n");            
+case S_IFSOCK: printf("socket\n");                  
+default:       
+} 
+printf("unknown?\n");                
+The following POSIX macros are defined to check  
+the file type using the st_mode field: 
+S_ISREG(m) - is it a regular file? 
+S_ISDIR(m) - directory? 
+S_ISCHR(m) - character device? 
+S_ISBLK(m) - block device? 
+break; 
+break; 
+break; 
+break; 
+break; 
+break; 
+break; 
+break; 
+S_ISFIFO(m) - FIFO (named pipe)? 
+S_ISLNK(m) - symbolic link? (Not in POSIX.1-1996.) 
+S_ISSOCK(m) - socket? (Not in POSIX.1-1996.) 
