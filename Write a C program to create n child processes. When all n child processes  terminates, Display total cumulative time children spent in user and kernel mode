@@ -1,0 +1,59 @@
+17. Write a C program to create n child processes. When all n child processes 
+terminates, Display total cumulative time children spent in user and kernel mode 
+#include <stdio.h> 
+#include <stdlib.h> 
+#include <sys/types.h> 
+#include <sys/wait.h> 
+#include <sys/resource.h> 
+#include <unistd.h> 
+int main() { 
+int n; 
+printf("Enter the number of child processes to create: "); 
+scanf("%d", &n); 
+// Initialize variables to track total user and kernel times 
+struct rusage usage; 
+long total_user_time = 0; 
+long total_kernel_time = 0; 
+for (int i = 0; i < n; i++) { 
+pid_t pid = fork(); 
+if (pid == -1) { 
+// Error handling in case fork fails 
+perror("fork failed"); 
+exit(1); 
+} 
+if (pid == 0) { 
+// Child process: Perform some work (simulated by sleep) 
+printf("Child %d started\n", i + 1); 
+sleep(1);  // Simulate some work by sleeping for 1 second 
+printf("Child %d exiting\n", i + 1); 
+exit(0);  // Child exits 
+} 
+} 
+// Parent process waits for all child processes to terminate 
+for (int i = 0; i < n; i++) { 
+wait(NULL);  // Wait for each child process to finish 
+} 
+// Collect and sum the cumulative time spent in user and kernel modes 
+for (int i = 0; i < n; i++) { 
+pid_t pid = waitpid(-1, NULL, 0);  // Get status of terminated child 
+if (pid == -1) { 
+perror("waitpid failed"); 
+exit(1); 
+} 
+// Get resource usage of the terminated child process 
+if (getrusage(RUSAGE_CHILDREN, &usage) == -1) { 
+perror("getrusage failed"); 
+exit(1); 
+} 
+// Accumulate user and kernel times for all children 
+total_user_time += usage.ru_utime.tv_sec * 1000000 + 
+usage.ru_utime.tv_usec; 
+total_kernel_time += usage.ru_stime.tv_sec * 1000000 + 
+usage.ru_stime.tv_usec; 
+} 
+// Convert times from microseconds to seconds 
+printf("\nTotal cumulative time spent by all child processes:\n"); 
+printf("User Time: %ld seconds\n", total_user_time / 1000000); 
+printf("Kernel Time: %ld seconds\n", total_kernel_time / 1000000); 
+return 0; 
+}
