@@ -1,0 +1,26 @@
+9.  Demonstrate the use of atexit() function. 
+#include <bits/stdc++.h> 
+using namespace std; 
+// Returns no value, and takes nothing as a parameter 
+void done() 
+{ 
+cout << "Exiting Successfully" 
+<< "\n"; // Executed second 
+Output:  
+Registration successful 
+Exiting Successfully 
+} 
+// Driver Code 
+int main() 
+{ 
+    int value; 
+    value = atexit(done); 
+  
+    if (value != 0) { 
+        cout << "atexit () function registration failed"; 
+        exit(1); 
+    } 
+    cout << " Registration successful" 
+         << "\n"; // Executed First 
+    return 0; 
+} 
